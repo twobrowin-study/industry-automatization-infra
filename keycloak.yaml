@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keycloak
+spec:
+  storageClassName: ""
+  volumeName: keycloak
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,6 +32,9 @@ spec:
         name: keycloak
         ports:
         - containerPort: 8180
+        volumeMounts:
+        - name: keycloak
+          mountPath: /opt/jboss/keycloak
 
 ---
 

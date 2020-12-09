@@ -3,5 +3,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: keycloak
 spec:
+  accessModes:
+  - ReadWriteOnce
   storageClassName: ""
   volumeName: keycloak
+  resources:
+    requests:
+      storage: 300Mi

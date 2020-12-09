@@ -11,6 +11,7 @@ envsubst:
   - envsubst -i keycloak.yaml -o keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   artifacts:
     paths:
+    - volumes-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
     - keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
     expire_in: 30 minutes
 

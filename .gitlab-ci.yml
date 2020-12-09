@@ -1,6 +1,7 @@
 image: twobrowin/runners:alpine-kubectl-buildah-envsubst
 
 stages:
+- envsubst
 - deploy
 
 envsubst:

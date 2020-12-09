@@ -7,6 +7,7 @@ stages:
 envsubst:
   stage: envsubst
   script:
+  - envsubst -i volumes.yaml -o volumes-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   - envsubst -i keycloak.yaml -o keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   artifacts:
     paths:
@@ -16,4 +17,5 @@ envsubst:
 deploy:
   stage: deploy
   script:
+  - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f volumes-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml

@@ -7,13 +7,13 @@ stages:
 envsubst:
   stage: envsubst
   script:
-  - envsubst -i keycloak.yaml -o keycloak-PREPARED.yaml
+  - envsubst -i keycloak.yaml -o keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   artifacts:
     paths:
-    - keycloak-PREPARED.yaml
+    - keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
     expire_in: 30 minutes
 
 deploy:
   stage: deploy
   script:
-  - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f keycloak-PREPARED.yaml
+  - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml

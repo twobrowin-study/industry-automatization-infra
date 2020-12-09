@@ -1,7 +1,18 @@
-image: twobrowin/runners:kubectl-buildah
+image: twobrowin/runners:alpine-kubectl-buildah-envsubst
+
+stages:
+- deploy
+
+envsubst:
+  stage: envsubst
+  script:
+  - envsubst -i keycloak.yaml -o keycloak-PREPARED.yaml
+  artifacts:
+    paths:
+    - keycloak-PREPARED.yaml
+    expire_in: 30 minutes
 
 deploy:
+  stage: deploy
   script:
-  - buildah --storage-driver=vfs bud -t tuned-keycloak .
-  - buildah push --storage-driver=vfs --tls-verify=false --creds $DOCKER_PUSH_CREDS tuned-keycloak $DOCKER_PUSH_REGISTRY/tuned-keycloak:latest
-  - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply -f keycloak.yaml
+  - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f keycloak-PREPARED.yaml

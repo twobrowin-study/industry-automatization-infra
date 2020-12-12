@@ -12,53 +12,57 @@ spec:
       labels:
         app: keycloak
     spec:
+      volumes:
+      - name: keycloak
+        persistentVolumeClaim:
+          claimName: keycloak
       containers:
       - image: activiti/activiti-keycloak:latest
         name: keycloak
         ports:
         - containerPort: 8180
         volumeMounts:
-        - name: keycloak
-          mountPath: /opt/jboss/keycloak
+        - mountPath: /opt/jboss/keycloak/activiti-realm.json
+          name: keycloak
 
----
+# ---
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: keycloak
-spec:
-  selector:
-    app: keycloak
-  ports:
-  - name: "8180"
-    port: 8180
-    targetPort: 8180
-status:
-  loadBalancer: {}
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: keycloak
+# spec:
+#   selector:
+#     app: keycloak
+#   ports:
+#   - name: "8180"
+#     port: 8180
+#     targetPort: 8180
+# status:
+#   loadBalancer: {}
 
----
+# ---
 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: keycloak
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/proxy-buffering: "on"
-    nginx.ingress.kubernetes.io/proxy-buffer-size: "64k"
-    nginx.ingress.kubernetes.io/proxy-buffers: "64k"
-    nginx.ingress.kubernetes.io/proxy-busy-buffers: "64k"
-    nginx.ingress.kubernetes.io/fastcgi-buffer-size: "32k"
-    nginx.ingress.kubernetes.io/fastcgi-buffers: "4"
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /auth/
-        pathType: Prefix
-        backend:
-          service:
-            name: keycloak
-            port:
-              number: 8180
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: keycloak
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+#     nginx.ingress.kubernetes.io/proxy-buffering: "on"
+#     nginx.ingress.kubernetes.io/proxy-buffer-size: "64k"
+#     nginx.ingress.kubernetes.io/proxy-buffers: "64k"
+#     nginx.ingress.kubernetes.io/proxy-busy-buffers: "64k"
+#     nginx.ingress.kubernetes.io/fastcgi-buffer-size: "32k"
+#     nginx.ingress.kubernetes.io/fastcgi-buffers: "4"
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - path: /auth/
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: keycloak
+#             port:
+#               number: 8180

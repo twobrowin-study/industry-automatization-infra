@@ -1,12 +1,28 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: infra-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/infra"
+
+---
+
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: keycloak
 spec:
+  storageClassName: manual
   accessModes:
-  - ReadWriteOnce
-  storageClassName: ""
-  volumeName: keycloak
+    - ReadWriteOnce
   resources:
     requests:
       storage: 300Mi

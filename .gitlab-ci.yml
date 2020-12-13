@@ -1,22 +1,28 @@
-image: twobrowin/runners:alpine-kubectl-buildah-envsubst
-
 stages:
 - envsubst
-- deploy
+- kubectl
 
 envsubst:
+  image: twobrowin/gitlab-runners:envsubs
   stage: envsubst
   script:
   - envsubst -i volumes.yaml -o volumes-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   - envsubst -i keycloak.yaml -o keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
+  - envsubst -i rbbitmq.yaml -o rbbitmq-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
+  - envsubst -i query.yaml -o query-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   artifacts:
     paths:
     - volumes-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
     - keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
+    - rbbitmq-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
+    - query-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
     expire_in: 30 minutes
 
-deploy:
-  stage: deploy
+kubectl:
+  image: twobrowin/gitlab-runners:kubectl
+  stage: kubectl
   script:
   - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f volumes-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
+  - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f rbbitmq-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
+  - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f query-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml

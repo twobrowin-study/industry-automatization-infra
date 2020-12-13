@@ -7,12 +7,12 @@ envsubst:
   stage: envsubst
   script:
   - envsubst -i keycloak.yaml -o keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
-  - envsubst -i rabitmq.yaml -o rabitmq-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
+  - envsubst -i rabbitmq.yaml -o rabbitmq-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   - envsubst -i query.yaml -o query-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   artifacts:
     paths:
     - keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
-    - rabitmq-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
+    - rabbitmq-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
     - query-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
     expire_in: 30 minutes
 
@@ -21,5 +21,5 @@ kubectl:
   stage: kubectl
   script:
   - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f keycloak-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
-  - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f rabitmq-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
+  - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f rabbitmq-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
   - kubectl --kubeconfig $KUBECTL_CONFIG --token $KUBECTL_USER_TOCKEN apply --record -f query-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}.yaml
